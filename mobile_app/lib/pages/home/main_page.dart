@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/pages/home/chat_page.dart';
+import 'package:mobile_app/pages/home/home_page.dart';
+import 'package:mobile_app/pages/home/profile_page.dart';
+import 'package:mobile_app/pages/home/wishlist_page.dart';
 import 'package:mobile_app/theme.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +28,21 @@ class MainPage extends StatelessWidget {
       );
     }
 
+    Widget bodyContent() {
+      switch (currentIndex) {
+        case 0:
+          return const HomePage();
+        case 1:
+          return const ChatPage();
+        case 2:
+          return const WishlistPage();
+        case 3:
+          return const ProfilePage();
+        default:
+          return const HomePage();
+      }
+    }
+
     Widget costumeButtomNav() {
       return ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
@@ -25,31 +51,57 @@ class MainPage extends StatelessWidget {
           notchMargin: 10,
           clipBehavior: Clip.antiAlias,
           child: BottomNavigationBar(
+              currentIndex: currentIndex,
               type: BottomNavigationBarType.fixed,
               backgroundColor: backgroundColor4,
+              onTap: (value) {
+                setState(() {
+                  currentIndex = value;
+                });
+              },
               items: [
                 BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/icon_home.png',
-                      width: 21,
+                    icon: Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Image.asset(
+                        'assets/icon_home.png',
+                        width: 21,
+                        color:
+                            currentIndex == 0 ? primaryColor : basicGrayColor,
+                      ),
                     ),
                     label: ""),
                 BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/icon_chat.png',
-                      width: 20,
+                    icon: Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Image.asset(
+                        'assets/icon_chat.png',
+                        width: 20,
+                        color:
+                            currentIndex == 1 ? primaryColor : basicGrayColor,
+                      ),
                     ),
                     label: ""),
                 BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/icon_love.png',
-                      width: 20,
+                    icon: Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Image.asset(
+                        'assets/icon_love.png',
+                        width: 20,
+                        color:
+                            currentIndex == 2 ? primaryColor : basicGrayColor,
+                      ),
                     ),
                     label: ""),
                 BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/icon_user.png',
-                      width: 18,
+                    icon: Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Image.asset(
+                        'assets/icon_user.png',
+                        width: 18,
+                        color:
+                            currentIndex == 3 ? primaryColor : basicGrayColor,
+                      ),
                     ),
                     label: "")
               ]),
@@ -62,7 +114,7 @@ class MainPage extends StatelessWidget {
       floatingActionButton: cartButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: costumeButtomNav(),
-      body: const Center(child: Text('home Page')),
+      body: bodyContent(),
     );
   }
 }
