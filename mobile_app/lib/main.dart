@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/pages/detail_chat_page.dart';
 import 'package:mobile_app/pages/home/main_page.dart';
 import 'package:mobile_app/pages/sign_in_page.dart';
 import 'package:mobile_app/pages/sign_up_page.dart';
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashPage(),
         '/sign-in': (context) => const SignInPage(),
         '/sign-up': (context) => const SignUpPage(),
-        '/home': (context) => const MainPage()
+        '/home': (context) => const MainPage(),
+        '/detail-chat': (context) => const DetailChatPage()
       },
     );
   }

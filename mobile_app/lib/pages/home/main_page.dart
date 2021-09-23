@@ -48,7 +48,7 @@ class _MainPageState extends State<MainPage> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
-          notchMargin: 10,
+          notchMargin: 12,
           clipBehavior: Clip.antiAlias,
           child: BottomNavigationBar(
               currentIndex: currentIndex,
