@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/user_model.dart';
+import 'package:mobile_app/providers/auth_provider.dart';
+import 'package:mobile_app/providers/product_provider.dart';
 import 'package:mobile_app/theme.dart';
 import 'package:mobile_app/widgets/product_card.dart';
 import 'package:mobile_app/widgets/product_tile.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    ProductProvider productProvider = Provider.of<ProductProvider>(context);
+    UserModel user = authProvider.user;
+
     Widget header() {
       return Container(
         margin: EdgeInsets.only(
@@ -19,12 +27,12 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Hallo, Alex',
+                    'Hallo, ${user.name}',
                     style: primaryTextStyle.copyWith(
                         fontSize: 24, fontWeight: semiBold),
                   ),
                   Text(
-                    '@alexkun',
+                    '@${user.username}',
                     style: subTitleTextStyle.copyWith(fontSize: 16),
                   )
                 ],
@@ -33,10 +41,10 @@ class HomePage extends StatelessWidget {
             Container(
               width: 54,
               height: 54,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      image: AssetImage("assets/default_user.png"))),
+                      image: NetworkImage(user.profilePhotoUrl ?? ""))),
             )
           ],
         ),
@@ -146,13 +154,12 @@ class HomePage extends StatelessWidget {
             children: [
               SizedBox(width: defaultMargin),
               Row(
-                children: [
-                  ProductCard(key: UniqueKey()),
-                  ProductCard(key: UniqueKey()),
-                  ProductCard(key: UniqueKey()),
-                  ProductCard(key: UniqueKey()),
-                  ProductCard(key: UniqueKey())
-                ],
+                children: productProvider.products
+                    .map((e) => ProductCard(
+                          key: UniqueKey(),
+                          productModel: e,
+                        ))
+                    .toList(),
               )
             ],
           ),
@@ -175,12 +182,12 @@ class HomePage extends StatelessWidget {
       return Container(
         margin: const EdgeInsets.only(top: 14),
         child: Column(
-          children: [
-            ProductTile(key: UniqueKey()),
-            ProductTile(key: UniqueKey()),
-            ProductTile(key: UniqueKey()),
-            ProductTile(key: UniqueKey())
-          ],
+          children: productProvider.products
+              .map((e) => ProductTile(
+                    key: UniqueKey(),
+                    product: e,
+                  ))
+              .toList(),
         ),
       );
     }

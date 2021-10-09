@@ -1,22 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/product_model.dart';
+import 'package:mobile_app/providers/cart_provider.dart';
+import 'package:mobile_app/providers/wishtlist_provider.dart';
 import 'package:mobile_app/theme.dart';
+import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({Key? key}) : super(key: key);
+  final ProductModel product;
+  const ProductPage({Key? key, required this.product}) : super(key: key);
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final List images = [
-    "assets/sample_product.png",
-    "assets/sample_product.png",
-    "assets/sample_product.png",
-    "assets/sample_product.png"
-  ];
-
   final List familiarShoes = [
     "assets/sample_product.png",
     "assets/sample_product.png",
@@ -28,10 +26,13 @@ class _ProductPageState extends State<ProductPage> {
     "assets/sample_product.png"
   ];
   int currentIndex = 0;
-  bool isWishList = false;
 
   @override
   Widget build(BuildContext context) {
+    WishtListProvider wishtListProvider =
+        Provider.of<WishtListProvider>(context);
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
+
     Future<dynamic> showSuccessDialog() async {
       return showDialog(
           context: context,
@@ -82,7 +83,9 @@ class _ProductPageState extends State<ProductPage> {
                                 backgroundColor: primaryColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12))),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/cart');
+                            },
                             child: Text(
                               "View My Cart",
                               style: primaryTextStyle.copyWith(
@@ -133,9 +136,9 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           CarouselSlider(
-              items: images
-                  .map((path) => Image.asset(
-                        path,
+              items: widget.product.galleries
+                  ?.map((path) => Image.asset(
+                        "assets/sample_product.png",
                         width: MediaQuery.of(context).size.width,
                         height: 310,
                         fit: BoxFit.cover,
@@ -150,7 +153,7 @@ class _ProductPageState extends State<ProductPage> {
                   })),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: images.map((path) {
+            children: widget.product.galleries!.map((path) {
               index++;
               return indicatorSlider(index);
             }).toList(),
@@ -193,22 +196,20 @@ class _ProductPageState extends State<ProductPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "TERREX URBAN LOW",
+                        widget.product.name ?? "",
                         style: primaryTextStyle.copyWith(
                             fontSize: 18, fontWeight: semiBold),
                       ),
                       Text(
-                        'Hiking',
+                        widget.product.category?.name ?? "",
                         style: secondaryTextStyle.copyWith(fontSize: 12),
                       )
                     ],
                   )),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isWishList = !isWishList;
-                      });
-                      if (isWishList) {
+                      wishtListProvider.setProduct(widget.product);
+                      if (wishtListProvider.isWishList(widget.product)) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: secondaryColor,
                             content: const Text(
@@ -225,7 +226,7 @@ class _ProductPageState extends State<ProductPage> {
                       }
                     },
                     child: Image.asset(
-                      isWishList
+                      wishtListProvider.isWishList(widget.product)
                           ? "assets/button_wish_list_active.png"
                           : "assets/button_wish_list.png",
                       width: 46,
@@ -249,7 +250,7 @@ class _ProductPageState extends State<ProductPage> {
                     style: primaryTextStyle,
                   ),
                   Text(
-                    "\$143,98",
+                    "\$${widget.product.price}",
                     style: priceTextStyle.copyWith(
                         fontSize: 16, fontWeight: semiBold),
                   )
@@ -272,8 +273,7 @@ class _ProductPageState extends State<ProductPage> {
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,",
+                  Text(widget.product.description ?? "",
                       style: subTitleTextStyle.copyWith(fontWeight: light),
                       textAlign: TextAlign.justify)
                 ],
@@ -335,6 +335,7 @@ class _ProductPageState extends State<ProductPage> {
                       height: 54,
                       child: TextButton(
                         onPressed: () {
+                          cartProvider.addCart(widget.product);
                           showSuccessDialog();
                         },
                         style: TextButton.styleFrom(

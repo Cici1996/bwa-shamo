@@ -1,11 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/providers/auth_provider.dart';
 import 'package:mobile_app/theme.dart';
+import 'package:mobile_app/widgets/loading_button.dart';
+import 'package:provider/provider.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
 
   @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  final TextEditingController emailContoller = TextEditingController(text: "");
+
+  final TextEditingController passwordContoller =
+      TextEditingController(text: "");
+
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleSIgn() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.login(
+        password: passwordContoller.text,
+        email: emailContoller.text,
+      )) {
+        Navigator.pushNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: alertColor,
+            content: const Text(
+              "Sign-in Failed,please try again",
+              textAlign: TextAlign.center,
+            )));
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+
     Widget header() {
       return Container(
         margin: const EdgeInsets.only(top: 30),
@@ -53,6 +94,7 @@ class SignInPage extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                       child: TextFormField(
+                          controller: emailContoller,
                           decoration: InputDecoration.collapsed(
                             hintText: 'Your Email Address',
                             hintStyle: subTitleTextStyle,
@@ -91,6 +133,7 @@ class SignInPage extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                       child: TextFormField(
+                          controller: passwordContoller,
                           obscureText: true,
                           decoration: InputDecoration.collapsed(
                             hintText: 'Your Password',
@@ -109,9 +152,7 @@ class SignInPage extends StatelessWidget {
         width: double.infinity,
         margin: const EdgeInsets.only(top: 30),
         child: TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
+          onPressed: handleSIgn,
           style: TextButton.styleFrom(
               backgroundColor: primaryColor,
               shape: RoundedRectangleBorder(
@@ -157,7 +198,7 @@ class SignInPage extends StatelessWidget {
               header(),
               emailInput(),
               passwordInput(),
-              signButton(),
+              isLoading ? LoadingButton(key: UniqueKey()) : signButton(),
               const Spacer(),
               footer()
             ],

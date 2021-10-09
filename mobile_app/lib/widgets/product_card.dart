@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/product_model.dart';
+import 'package:mobile_app/pages/product_page.dart';
 import 'package:mobile_app/theme.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({Key? key}) : super(key: key);
+  final ProductModel productModel;
+  const ProductCard({Key? key, required this.productModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, "/product");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProductPage(
+                      product: productModel,
+                      key: UniqueKey(),
+                    )));
       },
       child: Container(
         width: 215,
@@ -31,18 +40,19 @@ class ProductCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Hiking',
+                  Text(productModel.category?.name ?? "",
                       style: secondaryTextStyle.copyWith(fontSize: 12)),
                   const SizedBox(height: 6),
                   Text(
-                    'COURT VERSION 2.0',
+                    productModel.name ?? "",
                     style: blackTextStyle.copyWith(
                         fontSize: 18, fontWeight: semiBold),
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '\$18,6',
+                    '\$${productModel.price}',
                     style: priceTextStyle.copyWith(
                         fontSize: 14, fontWeight: medium),
                   )

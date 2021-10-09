@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/cart_model.dart';
+import 'package:mobile_app/providers/cart_provider.dart';
 import 'package:mobile_app/theme.dart';
+import 'package:provider/provider.dart';
 
 class CartCard extends StatelessWidget {
-  const CartCard({Key? key}) : super(key: key);
+  final CartModel cart;
+  const CartCard({Key? key, required this.cart}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
     return Container(
       margin: EdgeInsets.only(top: defaultMargin),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -30,46 +35,62 @@ class CartCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Terrex Urban Low",
+                  cart.product?.name ?? "",
                   style: primaryTextStyle.copyWith(fontWeight: semiBold),
                 ),
                 Text(
-                  "\$143,98",
+                  "\$${cart.product?.price ?? ""}",
                   style: priceTextStyle,
                 )
               ],
             )),
             Column(
               children: [
-                Image.asset(
-                  "assets/button_add_item.png",
-                  width: 16,
+                GestureDetector(
+                  onTap: () {
+                    cartProvider.addQuantity(cart.id ?? -1);
+                  },
+                  child: Image.asset(
+                    "assets/button_add_item.png",
+                    width: 16,
+                  ),
                 ),
                 const SizedBox(height: 2),
-                Text("2", style: primaryTextStyle.copyWith(fontWeight: medium)),
+                Text(cart.quantity.toString(),
+                    style: primaryTextStyle.copyWith(fontWeight: medium)),
                 const SizedBox(height: 2),
-                Image.asset(
-                  "assets/button_reduce_item.png",
-                  width: 16,
+                GestureDetector(
+                  onTap: () {
+                    cartProvider.reduceQuantity(cart.id ?? -1);
+                  },
+                  child: Image.asset(
+                    "assets/button_reduce_item.png",
+                    width: 16,
+                  ),
                 )
               ],
             )
           ]),
           const SizedBox(height: 12),
-          Row(children: [
-            Icon(
-              Icons.delete,
-              color: alertColor,
-              size: 14,
-            ),
-            const SizedBox(
-              width: 4,
-            ),
-            Text(
-              "Remove",
-              style: alertTextStyle.copyWith(fontSize: 12, fontWeight: light),
-            )
-          ])
+          GestureDetector(
+            onTap: () {
+              cartProvider.removeCart(cart.id ?? -1);
+            },
+            child: Row(children: [
+              Icon(
+                Icons.delete,
+                color: alertColor,
+                size: 14,
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              Text(
+                "Remove",
+                style: alertTextStyle.copyWith(fontSize: 12, fontWeight: light),
+              )
+            ]),
+          )
         ],
       ),
     );

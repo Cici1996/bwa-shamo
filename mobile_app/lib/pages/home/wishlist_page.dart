@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/providers/wishtlist_provider.dart';
 import 'package:mobile_app/theme.dart';
 import 'package:mobile_app/widgets/wishlist_card.dart';
+import 'package:provider/provider.dart';
 
 class WishlistPage extends StatelessWidget {
   const WishlistPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    WishtListProvider wishtListProvider =
+        Provider.of<WishtListProvider>(context);
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -72,26 +76,21 @@ class WishlistPage extends StatelessWidget {
         color: backgroundColor3,
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-          children: [
-            WishListCard(
-              key: UniqueKey(),
-            ),
-            WishListCard(
-              key: UniqueKey(),
-            ),
-            WishListCard(
-              key: UniqueKey(),
-            ),
-            WishListCard(
-              key: UniqueKey(),
-            )
-          ],
+          children: wishtListProvider.wishList
+              .map((e) => WishListCard(
+                    key: UniqueKey(),
+                    product: e,
+                  ))
+              .toList(),
         ),
       ));
     }
 
     return Column(
-      children: [header(), content()],
+      children: [
+        header(),
+        wishtListProvider.wishList.isEmpty ? emptyList() : content()
+      ],
     );
   }
 }

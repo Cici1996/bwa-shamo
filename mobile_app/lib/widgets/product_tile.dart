@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/product_model.dart';
+import 'package:mobile_app/pages/product_page.dart';
 import 'package:mobile_app/theme.dart';
 
 class ProductTile extends StatelessWidget {
-  const ProductTile({Key? key}) : super(key: key);
+  final ProductModel product;
+  const ProductTile({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, "/product");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProductPage(
+                      product: product,
+                      key: UniqueKey(),
+                    )));
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -30,17 +39,17 @@ class ProductTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Football',
+                  product.category?.name ?? "",
                   style: secondaryTextStyle.copyWith(fontSize: 12),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Predator 20.3 Firm Guard',
+                  product.name ?? "",
                   style: primaryTextStyle.copyWith(
                       fontSize: 16, fontWeight: semiBold),
                 ),
                 Text(
-                  '\$88.67',
+                  '\$${product.price}',
                   style: priceTextStyle.copyWith(fontWeight: medium),
                 )
               ],

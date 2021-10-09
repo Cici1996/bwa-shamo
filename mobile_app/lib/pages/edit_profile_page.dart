@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/user_model.dart';
+import 'package:mobile_app/providers/auth_provider.dart';
 import 'package:mobile_app/theme.dart';
+import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
     PreferredSizeWidget header() {
       return AppBar(
         leading: IconButton(
@@ -42,7 +47,7 @@ class EditProfilePage extends StatelessWidget {
             TextFormField(
               style: primaryTextStyle,
               decoration: InputDecoration(
-                  hintText: "Alex Keinzal",
+                  hintText: user.name,
                   hintStyle: primaryTextStyle,
                   enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: subtitleTextColor))),
@@ -65,7 +70,7 @@ class EditProfilePage extends StatelessWidget {
             TextFormField(
               style: primaryTextStyle,
               decoration: InputDecoration(
-                  hintText: "@alexkunn",
+                  hintText: "@${user.username}",
                   hintStyle: primaryTextStyle,
                   enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: subtitleTextColor))),
@@ -88,7 +93,7 @@ class EditProfilePage extends StatelessWidget {
             TextFormField(
               style: primaryTextStyle,
               decoration: InputDecoration(
-                  hintText: "alex@email.com",
+                  hintText: user.email,
                   hintStyle: primaryTextStyle,
                   enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: subtitleTextColor))),
@@ -109,10 +114,11 @@ class EditProfilePage extends StatelessWidget {
               width: 100,
               height: 100,
               margin: EdgeInsets.only(top: defaultMargin),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      image: AssetImage("assets/default_user.png"))),
+                      fit: BoxFit.fill,
+                      image: NetworkImage(user.profilePhotoUrl ?? ""))),
             ),
             nameInput(),
             usernameInput(),
