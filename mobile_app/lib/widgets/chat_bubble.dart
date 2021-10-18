@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_app/models/product_model.dart';
 import 'package:mobile_app/theme.dart';
 
 class ChatBubble extends StatelessWidget {
   final String? textMessage;
   final bool isSender;
-  final bool hasProduct;
+  final ProductModel? product;
 
   const ChatBubble(
-      {Key? key,
-      this.isSender = false,
-      this.textMessage,
-      this.hasProduct = false})
+      {Key? key, this.isSender = false, this.textMessage, this.product})
       : super(key: key);
 
   @override
@@ -47,14 +45,14 @@ class ChatBubble extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "COURT VISION 2.0 SHOES",
+                      product?.name ?? "",
                       style: primaryTextStyle,
                     ),
                     const SizedBox(
                       height: 4,
                     ),
                     Text(
-                      '\$57,15',
+                      '\$${product?.price}',
                       style: priceTextStyle.copyWith(fontWeight: medium),
                     )
                   ],
@@ -103,7 +101,9 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment:
             isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          hasProduct ? productReview() : const SizedBox(),
+          product is UnitialiazeProductModel
+              ? const SizedBox()
+              : productReview(),
           Row(
             mainAxisAlignment:
                 isSender ? MainAxisAlignment.end : MainAxisAlignment.start,

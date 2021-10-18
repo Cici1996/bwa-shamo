@@ -1,11 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/message_model.dart';
+import 'package:mobile_app/models/product_model.dart';
+import 'package:mobile_app/providers/auth_provider.dart';
+import 'package:mobile_app/services/message_service.dart';
 import 'package:mobile_app/theme.dart';
 import 'package:mobile_app/widgets/chat_bubble.dart';
+import 'package:provider/provider.dart';
 
-class DetailChatPage extends StatelessWidget {
-  const DetailChatPage({Key? key}) : super(key: key);
+class DetailChatPage extends StatefulWidget {
+  ProductModel product;
+  DetailChatPage({Key? key, required this.product}) : super(key: key);
+
+  @override
+  State<DetailChatPage> createState() => _DetailChatPageState();
+}
+
+class _DetailChatPageState extends State<DetailChatPage> {
+  TextEditingController messageController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleAddMessage() async {
+      await MessageService()
+          .addMessage(
+              user: authProvider.user,
+              isFromUser: true,
+              message: messageController.text,
+              product: widget.product)
+          .then((value) => {
+                setState(() {
+                  widget.product = UnitialiazeProductModel();
+                  messageController.text = "";
+                })
+              });
+    }
+
     PreferredSizeWidget headerApp() {
       return PreferredSize(
         child: AppBar(
@@ -68,7 +99,7 @@ class DetailChatPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Predator 20.3',
+                    widget.product.name ?? "",
                     style: primaryTextStyle,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -76,15 +107,22 @@ class DetailChatPage extends StatelessWidget {
                     height: 2,
                   ),
                   Text(
-                    "\$57,15",
+                    "\$${widget.product.price ?? ""}",
                     style: priceTextStyle.copyWith(fontWeight: medium),
                   )
                 ],
               ),
             ),
-            Image.asset(
-              "assets/button_close_item.png",
-              width: 22,
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  widget.product = UnitialiazeProductModel();
+                });
+              },
+              child: Image.asset(
+                "assets/button_close_item.png",
+                width: 22,
+              ),
             )
           ],
         ),
@@ -98,7 +136,9 @@ class DetailChatPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            productReview(),
+            widget.product is UnitialiazeProductModel
+                ? const SizedBox()
+                : productReview(),
             Row(
               children: [
                 Expanded(
@@ -110,14 +150,18 @@ class DetailChatPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     child: TextFormField(
+                      controller: messageController,
+                      style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(
-                          hintText: 'Typle Message....',
+                          hintText: 'Type Message....',
                           hintStyle: subTitleTextStyle),
                     ),
                   ),
                 ),
                 const SizedBox(width: 20),
-                Image.asset("assets/button_send.png", width: 45)
+                GestureDetector(
+                    onTap: handleAddMessage,
+                    child: Image.asset("assets/button_send.png", width: 45))
               ],
             ),
           ],
@@ -126,28 +170,27 @@ class DetailChatPage extends StatelessWidget {
     }
 
     Widget content() {
-      return ListView(
-        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-        children: [
-          ChatBubble(
-            key: UniqueKey(),
-            isSender: true,
-            textMessage: 'Hi, This item is still available?',
-            hasProduct: true,
-          ),
-          ChatBubble(
-            key: UniqueKey(),
-            isSender: false,
-            textMessage:
-                'Good night, This item is only available in size 42 and 43',
-          ),
-          ChatBubble(
-            key: UniqueKey(),
-            isSender: true,
-            textMessage: 'Owww, it suits me very well',
-          )
-        ],
-      );
+      return StreamBuilder(
+          stream: MessageService()
+              .getMessageByUserId(userId: authProvider.user.id ?? 0),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<MessageModel>> snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                  padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+                  children: snapshot.data!
+                      .map((MessageModel message) => ChatBubble(
+                            isSender: message.isFromuser,
+                            textMessage: message.message,
+                            product: message.product,
+                          ))
+                      .toList());
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
     }
 
     return Scaffold(

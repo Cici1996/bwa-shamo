@@ -28,7 +28,7 @@ class ProductModel {
     name = json["name"];
     price = double.parse(json["price"].toString());
     description = json["description"];
-    tag = json["tags"];
+    tag = json["tag"];
     category = CategoryModel.fromJson(json["category"]);
     galleries = json['galleries']
         .map<GalleryModel>((gallery) => GalleryModel.fromJson(gallery))
@@ -45,9 +45,11 @@ class ProductModel {
       "description": description,
       "tag": tag,
       "category": category?.toJson(),
-      "createdAt": createdAt.toString(),
-      "updatedAt": updatedAt.toString(),
+      "created_at": createdAt.toString(),
+      "updated_at": updatedAt.toString(),
       "galleries": galleries?.map((e) => e.toJson()).toList(),
     };
   }
 }
+
+class UnitialiazeProductModel extends ProductModel {}

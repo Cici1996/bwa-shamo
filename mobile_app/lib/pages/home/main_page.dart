@@ -3,7 +3,9 @@ import 'package:mobile_app/pages/home/chat_page.dart';
 import 'package:mobile_app/pages/home/home_page.dart';
 import 'package:mobile_app/pages/home/profile_page.dart';
 import 'package:mobile_app/pages/home/wishlist_page.dart';
+import 'package:mobile_app/providers/page_provider.dart';
 import 'package:mobile_app/theme.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -13,10 +15,9 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
     Widget cartButton() {
       return FloatingActionButton(
         onPressed: () {
@@ -31,7 +32,7 @@ class _MainPageState extends State<MainPage> {
     }
 
     Widget bodyContent() {
-      switch (currentIndex) {
+      switch (pageProvider.currentIndex) {
         case 0:
           return const HomePage();
         case 1:
@@ -53,13 +54,11 @@ class _MainPageState extends State<MainPage> {
           notchMargin: 12,
           clipBehavior: Clip.antiAlias,
           child: BottomNavigationBar(
-              currentIndex: currentIndex,
+              currentIndex: pageProvider.currentIndex,
               type: BottomNavigationBarType.fixed,
               backgroundColor: backgroundColor4,
               onTap: (value) {
-                setState(() {
-                  currentIndex = value;
-                });
+                pageProvider.currentIndex = value;
               },
               items: [
                 BottomNavigationBarItem(
@@ -68,8 +67,9 @@ class _MainPageState extends State<MainPage> {
                       child: Image.asset(
                         'assets/icon_home.png',
                         width: 21,
-                        color:
-                            currentIndex == 0 ? primaryColor : basicGrayColor,
+                        color: pageProvider.currentIndex == 0
+                            ? primaryColor
+                            : basicGrayColor,
                       ),
                     ),
                     label: ""),
@@ -79,8 +79,9 @@ class _MainPageState extends State<MainPage> {
                       child: Image.asset(
                         'assets/icon_chat.png',
                         width: 20,
-                        color:
-                            currentIndex == 1 ? primaryColor : basicGrayColor,
+                        color: pageProvider.currentIndex == 1
+                            ? primaryColor
+                            : basicGrayColor,
                       ),
                     ),
                     label: ""),
@@ -90,8 +91,9 @@ class _MainPageState extends State<MainPage> {
                       child: Image.asset(
                         'assets/icon_love.png',
                         width: 20,
-                        color:
-                            currentIndex == 2 ? primaryColor : basicGrayColor,
+                        color: pageProvider.currentIndex == 2
+                            ? primaryColor
+                            : basicGrayColor,
                       ),
                     ),
                     label: ""),
@@ -101,8 +103,9 @@ class _MainPageState extends State<MainPage> {
                       child: Image.asset(
                         'assets/icon_user.png',
                         width: 18,
-                        color:
-                            currentIndex == 3 ? primaryColor : basicGrayColor,
+                        color: pageProvider.currentIndex == 3
+                            ? primaryColor
+                            : basicGrayColor,
                       ),
                     ),
                     label: "")
@@ -112,7 +115,8 @@ class _MainPageState extends State<MainPage> {
     }
 
     return Scaffold(
-      backgroundColor: currentIndex == 0 ? backgroundColor1 : backgroundColor3,
+      backgroundColor:
+          pageProvider.currentIndex == 0 ? backgroundColor1 : backgroundColor3,
       floatingActionButton: cartButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: costumeButtomNav(),

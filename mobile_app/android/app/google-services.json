@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "842154976578",
+    "project_id": "bwa-shamo-227f1",
+    "storage_bucket": "bwa-shamo-227f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842154976578:android:8235c13d69f6a7541054db",
+        "android_client_info": {
+          "package_name": "com.flutter.bwa_shamo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842154976578-oiajqjn5i0q0vsp2gponhq22idqaoebj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmcVK0OI3RWdRH3W_TLV9s3Da0VCnADI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "842154976578-oiajqjn5i0q0vsp2gponhq22idqaoebj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

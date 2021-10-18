@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/providers/page_provider.dart';
 import 'package:mobile_app/providers/wishtlist_provider.dart';
 import 'package:mobile_app/theme.dart';
 import 'package:mobile_app/widgets/wishlist_card.dart';
@@ -11,6 +12,7 @@ class WishlistPage extends StatelessWidget {
   Widget build(BuildContext context) {
     WishtListProvider wishtListProvider =
         Provider.of<WishtListProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -52,7 +54,9 @@ class WishlistPage extends StatelessWidget {
             SizedBox(
                 height: 44,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    pageProvider.currentIndex = 0;
+                  },
                   child: Text(
                     "Explore Store",
                     style: primaryTextStyle.copyWith(

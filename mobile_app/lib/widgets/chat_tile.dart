@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/models/message_model.dart';
+import 'package:mobile_app/models/product_model.dart';
+import 'package:mobile_app/pages/detail_chat_page.dart';
 import 'package:mobile_app/theme.dart';
 
 class ChatTile extends StatelessWidget {
-  const ChatTile({Key? key}) : super(key: key);
+  final MessageModel message;
+  const ChatTile({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/detail-chat');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DetailChatPage(product: UnitialiazeProductModel())));
       },
       child: Container(
         margin: const EdgeInsets.only(top: 33),
@@ -30,7 +38,7 @@ class ChatTile extends StatelessWidget {
                         style: primaryTextStyle.copyWith(fontSize: 15),
                       ),
                       Text(
-                        'Selamat datang d shamo store dan selamat berbelanja',
+                        message.message ?? "",
                         style: secondaryTextStyle.copyWith(fontWeight: light),
                         overflow: TextOverflow.ellipsis,
                       )
